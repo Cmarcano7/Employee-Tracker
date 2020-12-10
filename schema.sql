@@ -28,3 +28,9 @@ CREATE TABLE employee (
     PRIMARY KEY (employee_id),
     FOREIGN KEY (role_id) REFERENCES role(role_id)
 );
+
+-- Viewing the tables --
+
+SELECT * FROM department;
+SELECT * FROM role;
+SELECT * FROM employee;
