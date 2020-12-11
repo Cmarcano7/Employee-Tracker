@@ -1,5 +1,6 @@
-var mysql = require("mysql");
-var inquirer = require("inquirer");
+const mysql = require("mysql");
+const inquirer = require("inquirer");
+const cTable = require('console.table');
 
 var connection = mysql.createConnection({
     // Host name
@@ -15,5 +16,40 @@ var connection = mysql.createConnection({
 
 connection.connect(function(err) {
     if (err) throw err;
-    console.log("Connected");
+    console.log("connected as id " + connection.threadId);
+    employeeQuestionaire();
 });
+
+function employeeQuestionaire() {
+    inquirer
+        .prompt({
+            name: "action",
+            type: "list",
+            message: "Welcome, what would you like to do?",
+            choice: [
+                "Add department, role, employee",
+                "View department, role, employee",
+                "Update an employee's role",
+                "Exit"
+            ]
+        })
+        .then(function(answer){
+            switch(answer.action) {
+            case "Add department, role, employee":
+                createRow();
+                break;
+            
+            case "View  department, role, employee":
+                responseRow();
+                break;
+            
+            case "Update an employee's role":
+                updateRow();
+                break;
+
+            case "Exit":
+                connection.end();
+                break;
+        };
+    });
+};
