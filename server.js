@@ -26,11 +26,11 @@ connection.connect(function(err) {
     employeeQuestionaire();
 });
 
-var choices = [{
+var choice = [{
     name: "action",
     type: "list",
     message: "What would you like to choose?",
-    choice: [
+    choices: [
         "Department",
         "Role",
         "Employee",
@@ -54,7 +54,7 @@ function employeeQuestionaire() {
             name: "action",
             type: "list",
             message: "Welcome, what would you like to do?",
-            choice: [
+            choices: [
                 "Add department, role, employee",
                 "View department, role, employee",
                 "Update an employee's role",
@@ -84,17 +84,17 @@ function employeeQuestionaire() {
 };
 
 function createRow() {
-    inquirer.prompt(choices)
+    inquirer.prompt(choice)
     .then(answer => {
         switch(answer.action) {
             case "Department":
-                dep.createDepartment();
+                createDepartment();
                 break;
             case "Role":
-                role.createRole();
+                createRole();
                 break;
             case "Employee":
-                employee.createEmployee();
+                createEmployee();
                 break;
             case "Back":
                 employeeQuestionaire();
@@ -104,7 +104,7 @@ function createRow() {
 };
 
 function responseRow() {
-    inquirer.prompt(choices)
+    inquirer.prompt(choice)
     .then(answer => {
         switch(answer.action) {
             case "Department":
@@ -182,7 +182,7 @@ function updateEmployee() {
               }
               // when finished prompting, update the db with that info
               connection.query(
-                "UPDATE employee SET role_id = ? WHERE employee_id = (SELECT employee_id FROM(SELECT employee_id FROM employee WHERE CONCAT(first_name," ",last_name) = ?)AS NAME)",
+                'UPDATE employee SET role_id = ? WHERE employee_id = (SELECT employee_id FROM(SELECT employee_id FROM employee WHERE CONCAT(first_name," ", last_name) = ?) AS NAME)',
                 [roleID, answer.employeeChoice],
                 function (err, res3) {
                   if (err) throw err;
@@ -193,4 +193,96 @@ function updateEmployee() {
         });
       }
     );
-  }
+};
+
+function createDepartment() {
+    inquirer
+    .prompt([
+        {
+            name: "depId",
+            type: "input",
+            message: "What is the department's ID?"
+        },
+        {
+            name: "depName",
+            type: "input",
+            message: "What is the department's name?"
+        }
+    ])
+    .then(answer => {
+        connection.query("INSERT INTO department (department_id, name) VALUES (?,?)", [answer.depId, answer.depName], function(err, res) {
+            if (err) throw err;
+            console.log('Department ' + answer.depName + ' added');
+            employeeQuestionaire();
+        });
+    });
+};
+
+function createRole() {
+    inquirer
+    .prompt([
+        {
+            name: "roleId",
+            type: "input",
+            message: "What is the role's ID?"
+        },
+        {
+            name: "roleTitle",
+            type: "input",
+            message: "What is the role's title?"
+        },{
+            name: "roleSalary",
+            type: "input",
+            message: "What is the role's salary?"
+        },
+        {
+            name: "depId",
+            type: "input",
+            message: "What is the department's ID?"
+        }
+    ])
+    .then(answer => {
+        connection.query("INSERT INTO role (role_id, title, salary, department_id) VALUES (?,?,?,?)", [answer.roleId, answer.roleTitle, answer.roleSalary, answer.depId], function(err, res) {
+            if (err) throw err;
+            console.log('Role ' + answer.roleTitle + ' added');
+            employeeQuestionaire();
+        });
+    });
+};
+
+function createEmployee() {
+    inquirer
+    .prompt([
+        {
+            name: "empId",
+            type: "input",
+            message: "What is the employee's ID?"
+        },
+        {
+            name: "empFirst",
+            type: "input",
+            message: "What is the employee's first name?"
+        },{
+            name: "empLast",
+            type: "input",
+            message: "What is the employee's last name?"
+        },
+        {
+            name: "roleId",
+            type: "input",
+            message: "What is the employee's role ID?"
+        },
+        {
+            name: "managerId",
+            type: "input",
+            message: "What is the employee's manager ID?"
+        }
+    ])
+    .then(answer => {
+        connection.query("INSERT INTO employee (employee_id, first_name, last_name, role_id, manager_id) VALUES (?,?,?,?,?)", [answer.empId, answer.empFirst, answer.empLast, answer.roleId, answer.managerId], function(err, res) {
+            if (err) throw err;
+            console.log('Employee ' + answer.empFirst + ' ' + answer.empLast + ' added');
+            employeeQuestionaire();
+        });
+    });
+};

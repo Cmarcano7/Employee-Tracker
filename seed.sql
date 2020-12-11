@@ -57,3 +57,6 @@ VALUE (500, "IT Lead", 60000, 5000);
 
 INSERT INTO role (role_id, title, salary, department_id)
 VALUE (510, "IT Support", 47000, 5000);
+
+INSERT INTO employee (first_name, last_name, role_id, manager_id)
+VALUE ("Elon", "Musk", 100, 20);
