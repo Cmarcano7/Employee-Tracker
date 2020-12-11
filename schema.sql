@@ -1,7 +1,12 @@
+-- Deleting any database with a similar name --
+
+DROP DATABASE IF EXISTS employee_db;
+
 -- Creating Database within our system --
 
 CREATE DATABASE employee_db;
 
+USE employee_db;
 -- Creating our tables necessary for our code --
 
 CREATE TABLE department (
