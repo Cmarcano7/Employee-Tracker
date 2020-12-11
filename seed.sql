@@ -1,3 +1,6 @@
+-- Making sure the correct database is used --
+USE employee_db;
+
 -- Inserting Department into database --
 INSERT INTO department (department_id, name) 
 VALUES (1000, "management")
